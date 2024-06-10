@@ -1,0 +1,161 @@
+<html>
+  	<head>
+    	<title>Raamatute asi</title>
+    	<link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+    	<script src="{{ url_for('static', filename='script.js') }}"></script>
+    </head>
+  	<body>
+    	<h1>Raamatute asi</h1>
+    	Otsing:
+    	<form action="/raamatud" method="get">
+            <input type="text" name="nimetus" placeholder="Nimi"> 
+			<input type="text" name="autor" placeholder="Autor">
+			<input type="text" name="aasta" placeholder="Aasta">
+            <select name="asukoht">
+                <option value="">
+                    -Koht-
+                </option>
+                {% for asukoht in asukohad %}
+                    <option value={{asukoht[0]}}>
+                    {{ asukoht[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+            <select name="sari">
+                <option value="">
+                    -Sari-
+                </option>
+                {% for sari in sarjad %}
+                    <option value={{sari[0]}}>
+                    {{ sari[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+            <input type="text" name="number" placeholder="Raamatu number">
+			<input type="submit" value="Otsi raamatut">
+        </form>
+    	<a href="/raamatud/all" class="buttonClass">Kõik raamatud</a>
+    	<table>
+      		<thead>
+        		<tr>
+					<th id="number">Number</th>
+					<th>Nimi</th>
+					<th>Autor</th>
+					<th>Aasta</th>
+					<th id="lk">Lehekülgede arv</th>
+					<th>Asukoht</th>
+					<th>Sari</th>
+                    <th id="loetud">Loetud?</th>
+        		</tr>
+      		</thead>
+      		<tbody>
+				{% for row in data %}
+				<!-- raamtute rida -->
+				<tr>
+                    <td>
+                        {% if row[7] is not none %}
+                        {{ row[7] }}
+                        {% endif %}
+                    </td>
+					<td>
+						{{ row[1] }}
+					</td>
+					<td>
+						{{ row[2] }}
+					</td>
+                    <td>
+                        {{ row[3] }}
+                    </td>
+                    <td>
+                        {{ row[4] }}
+                    </td>
+                    <td>
+                        {{ row[5] }}
+                    </td>
+                    <td>
+                        {{ row[6] }}
+                    </td>
+                    <td>
+                        {% if row[8] is true %}
+                        Jah
+                        {% else %}
+                        Ei
+                        {% endif %}
+                    </td>
+                    <td>
+						<form action="/raamatud/delete" method="post">
+						<input type="hidden" name="id" value="{{ row[0] }}">
+						<input type="submit" value="Kustuta">
+						</form>
+						<button onclick="tooEsile('{{row[0]}}')">Muuda andmeid</button>
+					</td>
+        		</tr>
+				<!-- muutmise rida -->
+				<tr class="hidden-row" id="peidetud" data-row-id="{{ row[0] }}">
+                    <form id="read" action="/raamatud/read" method="post">
+                        <input type="hidden" name="id" value="{{ row[0] }}">
+                    </form>
+                    <form id="update" action="/raamatud/update" method="post">
+                        <input type="hidden" name="id" value="{{ row[0] }}">
+                    </form>
+                    <td>
+                        <input form="update" type="text" name="enda_id" placeholder="Number" value="{% if row[7] is not none %}{{ row[7] }}{% endif %}">
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <select form="update" name="asukoht">
+                        {% for asukoht in asukohad %}
+                            <option {% if row[9] == asukoht[0] %}selected{% endif %} value={{asukoht[0]}}>
+                                {{ asukoht[1] }}
+                            </option>
+                        {% endfor %}
+                        </select>
+                    </td>
+                    <td></td>
+                    <td>
+                        <input form="read" type="submit" value="Märgi loetuks">
+                    </td>
+                    <td>
+                        <input form="update" type="submit" value="Muuda asju">
+                    </td>
+				</tr>
+				{% endfor %}
+			</tbody>
+    	</table>
+    	<h2>Lisa raamat</h2>
+    	<form action="/raamatud/create" method="post">
+      		<input type="text" name="nimetus" placeholder="Nimi"> 
+			<input type="text" name="autor" placeholder="Autor">
+			<input type="text" name="aasta" placeholder="Aasta">
+			<input type="text" name="lk_arv" placeholder="Lehekülgede arv">
+            <select name="asukoht">
+                {% for asukoht in asukohad %}
+                    <option value={{asukoht[0]}}>
+                    {{ asukoht[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+			<select name="sari">
+                {% for sari in sarjad %}
+                    <option value={{sari[0]}}>
+                    {{ sari[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+			<input type="text" name="number" placeholder="Raamatu number">
+			<input type="submit" value="Lisa">
+		</form>
+    	<form action="/raamatud/addseries" method="post">
+        	<input type="text" name="sari" placeholder="Raamatusarja nimi">
+        	<input type="submit" value="Tee uus sari">
+    	</form>
+        <form action="/raamatud/addlocation" method="post">
+        	<input type="text" name="asukoht" placeholder="Asukoha nimi">
+        	<input type="submit" value="Tee uus asukoht">
+    	</form>
+		<form action="/logout"><input type="submit" value="Logi välja"></form>
+  	</body>
+</html>

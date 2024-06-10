@@ -1,0 +1,30 @@
+<html>
+  	<head>
+    	<title>Kõik raamatud</title>
+    	<link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+    </head>
+    <body>
+        <h1>Kõik raamatud nimekirjana</h1>
+        <a href="/raamatud" class="buttonClass">Tagasi</a>
+        <table>
+            <thead>
+            <tr>
+                <th>
+                    Pealkiri
+                </th>
+                <th>
+                    Autor
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>
